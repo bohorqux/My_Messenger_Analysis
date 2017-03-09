@@ -12,13 +12,24 @@ def initThreads(messenger_html_doc):
     soup = BeautifulSoup(feed, 'lxml')
     threads = soup.find_all("div", class_ = "thread")
 
-    print("Threads parsed successfully!")
+    print("Threads parsed successfully!\n************************\n")
     return threads
 
 def getUniqueUsers(chat):
     """ return distinct list of users that exist in a single thread/chat """
     users = [user.string for user in chat.find_all("span", class_ = "user")]
     return list(set(users))
+
+def getPostingFreq(chat, user):
+    users = [u.string for u in chat.find_all("span", class_ = "user")]
+    return len([u for u in users if u == user])
+
+def displayPostingFreq(chat):
+    unique_users = getUniqueUsers(chat)
+    for u in unique_users:
+        frequency = getPostingFreq(chat, u)
+        print("%s: %d total posts" % (u, frequency))
+    return 0
 
 def displayUsers(chat):
     unique_users = getUniqueUsers(chat)
@@ -38,11 +49,40 @@ def displayAllUsers(threads):
        print("\n")
     return 0
 
+def displaySpecified(threads, user):
+    acc = 0
+    for i in range(len(threads)):
+        if user in getUniqueUsers(threads[i]):
+            print("thread[%d]:---" % i)
+            displayUsers(threads[i])
+            acc += 1
+            print()
+            print("*************************************")
+            displayPostingFreq(threads[i])
+            print("*************************************")
+            print()
+    print("Involved in %d message(s)...\n" % acc)
+    return 0
 
+def displayChat(chat):
+    users = [u.string for u in chat.find_all("span", class_ = "user")]
+    users.reverse()
+    posts = [p.string for p in chat.find_all("p")]
+    posts.reverse()
+    timestamps = [format_date(string_to_date(t.string)) for t in chat.find_all("span", class_ = "meta")]
+    timestamps.reverse()
+
+    for i in range(len(users)):
+        print("%s: %s\n\t%s" % (users[i], timestamps[i], posts[i]))
+    return 0
+    
 ##################################################################################
 def main():
     threads = initThreads("messages.htm")
-    displayAllUsers(threads)
+    #displayAllUsers(threads)
+    #displaySpecified(threads, "Keyan Vakil")
+    displayChat(threads[229])
+    #displayPostingFreq(threads[92])
     return 0
 
 main()

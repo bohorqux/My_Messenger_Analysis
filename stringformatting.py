@@ -30,9 +30,9 @@ def string_to_date(timestamp):
     """
     #initialize dictionary to correspond Month with integer
     months = dict()
-    m = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "November", "December"]
+    m = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     for i in range(len(m)):
-        months[m[i]] = i
+        months[m[i]] = i+1
 
     #format Messenger timestamp to remove irrelevant information
     stored = timestamp.split(" ")[1:]
@@ -45,5 +45,9 @@ def string_to_date(timestamp):
     
     return timestamp_int
 
-
+def format_date(timestamp):
+    timestamp = str(timestamp)
+    timearray = [timestamp[4:6], timestamp[6:8], timestamp[:4], timestamp[8:]]
+    timestring = ":".join(timearray)
+    return timestring
         
