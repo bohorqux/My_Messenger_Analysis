@@ -4,11 +4,13 @@ from bs4 import BeautifulSoup
 
 def initThreads(messenger_html_doc):
     """ devises soup object out of specified messenger file """
-    print("Opening file: %s" % messenger_html_doc)
+    print("Opening file: %s..." % messenger_html_doc)
     fileIn = open(messenger_html_doc, "r")
+    print("File opened!")
     feed = fileIn.read()
     fileIn.close()
-    print("Converting %s to soup object" % messenger_html_doc)
+    print("File closed!")
+    print("Converting %s to soup object..." % messenger_html_doc)
     soup = BeautifulSoup(feed, 'lxml')
     threads = soup.find_all("div", class_ = "thread")
 
@@ -21,10 +23,12 @@ def getUniqueUsers(chat):
     return list(set(users))
 
 def getPostingFreq(chat, user):
+    """ returns number of times user has posted in a chat """
     users = [u.string for u in chat.find_all("span", class_ = "user")]
     return len([u for u in users if u == user])
 
 def displayPostingFreq(chat):
+    """ prints frequency of all user posts in chat """
     unique_users = getUniqueUsers(chat)
     for u in unique_users:
         frequency = getPostingFreq(chat, u)
@@ -32,12 +36,13 @@ def displayPostingFreq(chat):
     return 0
 
 def displayUsers(chat):
+    """ prints users involved in a chat """
     unique_users = getUniqueUsers(chat)
-    for u in unique_users:
-        if "facebook.com" in u:
-            print("UNKNOWN...")
+    for u in range(len(unique_users)):
+        if "facebook.com" in unique_users[u]:
+            print(unique_users[u], "  ...Possibly: %s" % unique_users[u-1])
         else:
-            print(u)
+            print(unique_users[u])
     return 0
     
 def displayAllUsers(threads):
@@ -50,6 +55,7 @@ def displayAllUsers(threads):
     return 0
 
 def displaySpecified(threads, user):
+    """ prints the users in a chat if a specified user is found """
     acc = 0
     for i in range(len(threads)):
         if user in getUniqueUsers(threads[i]):
@@ -65,6 +71,7 @@ def displaySpecified(threads, user):
     return 0
 
 def displayChat(chat):
+    """ prints the conversation stored in chat """
     users = [u.string for u in chat.find_all("span", class_ = "user")]
     users.reverse()
     posts = [p.string for p in chat.find_all("p")]
@@ -79,9 +86,9 @@ def displayChat(chat):
 ##################################################################################
 def main():
     threads = initThreads("messages.htm")
-    #displayAllUsers(threads)
+    displayAllUsers(threads)
     #displaySpecified(threads, "Keyan Vakil")
-    displayChat(threads[229])
+    #displayChat(threads[229])
     #displayPostingFreq(threads[92])
     return 0
 
