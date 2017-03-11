@@ -29,10 +29,21 @@ def getPostingFreq(chat, user):
     users = [u.string for u in chat.find_all("span", class_ = "user")]
     return len([u for u in users if u == user])
 
+def getTotalPosts(chat):
+    """ returns number of posts in chat """
+    return len([p.string for p in chat.find_all("p")])
+
 def getStringMatches(chat, string):
     """ returns number of times string is found in a chat """
     posts = [p.string for p in chat.find_all("p")]
-    return len([True for p in posts if string in p])
+    counter = 0
+    for p in posts:
+        if p == None:
+            continue
+        elif string in p:
+            counter += 1
+    return counter
+
 ##################################### DATA RETRIEVAL FUNCTIONS ####################################################
 
 ################################# THREAD/CHAT VISUAL FUNCTIONS ####################################################
@@ -40,18 +51,23 @@ def getStringMatches(chat, string):
 def displayStringMatches(chat, string):
     """ prints frequency of string found in chat """
     matches = getStringMatches(chat, string)
-    print("\n##########\nFound %d instances of %s in this thread...\n###" % (matches, string))
+    print("\n####################\nFound %d instances of phrase - %s - in this thread...\n####################" % (matches, string))
     
 def displayPostingFreq(chat):
     """ prints frequency of all user posts in chat """
     unique_users = getUniqueUsers(chat)
+    print("\n*************** POSTING DATA ***************")
     for u in unique_users:
         frequency = getPostingFreq(chat, u)
-        print("%s: %d total posts" % (u, frequency))
+        print("%s: %d posts" % (u, frequency))
+
+    print("\nTotal post amount: %d" % getTotalPosts(chat))
+    print("*************** POSTING DATA ***************\n")
     return 0
 
 def displayUsers(chat):
     """ prints users involved in a chat """
+    print("\n--------------- USERS ---------------")
     unique_users = getUniqueUsers(chat)
     for u in range(len(unique_users)):
         if "facebook.com" in unique_users[u]:
@@ -59,6 +75,7 @@ def displayUsers(chat):
         else:
             print(unique_users[u])
 
+    print("----------------- USERS ---------------\n")
     displayPostingFreq(chat)
     
     return 0
@@ -107,10 +124,11 @@ def displayChat(chat):
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    #displayAllUsers(threads)
-    displaySpecified(threads, "Jerry Merchan")
+    displayAllUsers(threads)
+    #displaySpecified(threads, "Pedro Pereira")
+    #displayStringMatches(threads[125], "yo")
     #displayChat(threads[80])
-    #displayPostingFreq(threads[92])
+    #displayPostingFreq(threads[125])
     return 0
 ###################################### MAIN #################################################################
 
