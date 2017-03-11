@@ -17,6 +17,8 @@ def initThreads(messenger_html_doc):
     print("Threads parsed successfully!\n************************\n")
     return threads
 
+###################################### DATA RETRIEVAL FUNCTIONS #################################################
+
 def getUniqueUsers(chat):
     """ return distinct list of users that exist in a single thread/chat """
     users = [user.string for user in chat.find_all("span", class_ = "user")]
@@ -27,6 +29,19 @@ def getPostingFreq(chat, user):
     users = [u.string for u in chat.find_all("span", class_ = "user")]
     return len([u for u in users if u == user])
 
+def getStringMatches(chat, string):
+    """ returns number of times string is found in a chat """
+    posts = [p.string for p in chat.find_all("p")]
+    return len([True for p in posts if string in p])
+##################################### DATA RETRIEVAL FUNCTIONS ####################################################
+
+################################# THREAD/CHAT VISUAL FUNCTIONS ####################################################
+
+def displayStringMatches(chat, string):
+    """ prints frequency of string found in chat """
+    matches = getStringMatches(chat, string)
+    print("\n##########\nFound %d instances of %s in this thread...\n###" % (matches, string))
+    
 def displayPostingFreq(chat):
     """ prints frequency of all user posts in chat """
     unique_users = getUniqueUsers(chat)
@@ -43,6 +58,9 @@ def displayUsers(chat):
             print(unique_users[u], "  ...Possibly: %s" % unique_users[u-1])
         else:
             print(unique_users[u])
+
+    displayPostingFreq(chat)
+    
     return 0
     
 def displayAllUsers(threads):
@@ -80,17 +98,21 @@ def displayChat(chat):
     timestamps.reverse()
 
     for i in range(len(users)):
-        print("%s: %s\n\t%s" % (users[i], timestamps[i], posts[i]))
+        print("%s: %s\n\t%s\n" % (users[i], timestamps[i], posts[i]))
     return 0
-    
-##################################################################################
+
+########################## THREAD/CHAT VISUAL FUNCTIONS ####################################################
+
+
+###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    displayAllUsers(threads)
-    #displaySpecified(threads, "Keyan Vakil")
-    #displayChat(threads[229])
+    #displayAllUsers(threads)
+    displaySpecified(threads, "Jerry Merchan")
+    #displayChat(threads[80])
     #displayPostingFreq(threads[92])
     return 0
+###################################### MAIN #################################################################
 
 main()
 
