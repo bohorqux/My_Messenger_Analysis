@@ -44,6 +44,41 @@ def getStringMatches(chat, string):
             counter += 1
     return counter
 
+def getStringMatchesByUser(chat, string, user):
+    """ returns number of times string is said by user in chat """
+    users = [u.string for u in chat.find_all("span", class_ = "user")]
+    posts = [p.string for p in chat.find_all("p")]
+    
+    for i in range(len(posts)):
+        if posts[i] == None:
+            continue
+        elif string in posts[i] and users[i] == user:
+            counter += 1
+    return counter
+
+def getStringMatchPercentage(chat, string):
+    """ returns percentage of chat that consists of string """
+    return getStringMatches(chat, string)/getTotalPosts(chat)
+
+def getUserPercentage(chat, user):
+    """ returns percentage of chat that consists of user """
+    return getPostingFreq(chat, user)/getTotalPosts(chat)
+
+def getUserStringPercentage(chat, string, user):
+    """ returns percentage of string outputted by a user in a chat """
+    return getStringMatchesByUser(chat, string, user)/getPostringFreq(chat, user)
+
+def getTotalWords(chat):
+    """ returns total amount of words in chat """
+    posts = [p.string for p in chat.find_all("p")]
+    words = [len(pstring.split(" ")) for pstring in posts]
+    return sum(words)
+
+def getAverageMessageLength(chat):
+    """ returns average number of words in a chat """
+    posts = [p.string for p in chat.find_all("p")]
+    
+    
 ##################################### DATA RETRIEVAL FUNCTIONS ####################################################
 
 ################################# THREAD/CHAT VISUAL FUNCTIONS ####################################################
@@ -76,7 +111,7 @@ def displayUsers(chat):
             print(unique_users[u])
 
     print("----------------- USERS ---------------\n")
-    displayPostingFreq(chat)
+    #displayPostingFreq(chat)
     
     return 0
     
@@ -124,10 +159,20 @@ def displayChat(chat):
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    displayAllUsers(threads)
-    #displaySpecified(threads, "Pedro Pereira")
-    #displayStringMatches(threads[125], "yo")
-    #displayChat(threads[80])
+    #displayAllUsers(threads)
+    #displaySpecified(threads, "Milan Patel")
+    testring = "kek"
+    counter = 0
+    counter += getStringMatches(threads[0], testring)
+    counter += getStringMatches(threads[275], testring)
+    counter += getStringMatches(threads[276], testring)
+    counter += getStringMatches(threads[277], testring)
+    counter += getStringMatches(threads[278], testring)
+    counter += getStringMatches(threads[278], testring)
+    counter += getStringMatches(threads[337], testring)
+    print(counter)
+    #print("\n*******DISPLAYING CHAT *********\n")
+    #displayChat(threads[337])
     #displayPostingFreq(threads[125])
     return 0
 ###################################### MAIN #################################################################
