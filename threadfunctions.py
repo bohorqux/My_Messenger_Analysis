@@ -64,6 +64,15 @@ def getUserPercentage(chat, user):
     """ returns percentage of chat that consists of user """
     return getPostingFreq(chat, user)/getTotalPosts(chat)
 
+def getAllUserPercentage(chat):
+    """ returns dictionary that corresponds user with posting percentage """
+    percentages = dict()
+    users = getUniqueUsers(chat)
+    for u in users:
+        percentages[u] = getUserPercentage(chat, u)
+
+    return percentages
+
 def getUserStringPercentage(chat, string, user):
     """ returns percentage of string outputted by a user in a chat """
     return getStringMatchesByUser(chat, string, user)/getPostringFreq(chat, user)
@@ -71,12 +80,13 @@ def getUserStringPercentage(chat, string, user):
 def getTotalWords(chat):
     """ returns total amount of words in chat """
     posts = [p.string for p in chat.find_all("p")]
-    words = [len(pstring.split(" ")) for pstring in posts]
+    words = [len(pstring.split(" ")) for pstring in posts if pstring != None]
     return sum(words)
 
 def getAverageMessageLength(chat):
     """ returns average number of words in a chat """
     posts = [p.string for p in chat.find_all("p")]
+    return len(posts)/getTotalWords(chat)
     
     
 ##################################### DATA RETRIEVAL FUNCTIONS ####################################################
@@ -91,13 +101,11 @@ def displayStringMatches(chat, string):
 def displayPostingFreq(chat):
     """ prints frequency of all user posts in chat """
     unique_users = getUniqueUsers(chat)
-    print("\n*************** POSTING DATA ***************")
     for u in unique_users:
         frequency = getPostingFreq(chat, u)
         print("%s: %d posts" % (u, frequency))
 
-    print("\nTotal post amount: %d" % getTotalPosts(chat))
-    print("*************** POSTING DATA ***************\n")
+    print("\nTotal post amount: %d\n" % getTotalPosts(chat))
     return 0
 
 def displayUsers(chat):
@@ -111,8 +119,6 @@ def displayUsers(chat):
             print(unique_users[u])
 
     print("----------------- USERS ---------------\n")
-    #displayPostingFreq(chat)
-    
     return 0
     
 def displayAllUsers(threads):
@@ -132,11 +138,6 @@ def displaySpecified(threads, user):
             print("thread[%d]:---" % i)
             displayUsers(threads[i])
             acc += 1
-            print()
-            print("*************************************")
-            displayPostingFreq(threads[i])
-            print("*************************************")
-            print()
     print("Involved in %d message(s)...\n" % acc)
     return 0
 
@@ -153,24 +154,34 @@ def displayChat(chat):
         print("%s: %s\n\t%s\n" % (users[i], timestamps[i], posts[i]))
     return 0
 
+def displayChatData(chat):
+    """ prints a bunch of data about a chat """
+    print("--------------- U S E R S ---------------")
+    displayUsers(chat)
+    print("--------------- U S E R S ---------------")
+    print("\n*************** D A T A ***************")
+    displayPostingFreq(chat)
+    print("Total posts in chat: %d" % getTotalPosts(chat))
+    print("Total words in chat: %d" % getTotalWords(chat))
+    print("AverageMessageLength: %.3f" % getAverageMessageLength(chat))
+
+    userfreq = getAllUserPercentage(chat)
+    print("\n%%%%%%%%%%%%%%% F R E Q %%%%%%%%%%%%%%%")
+    for u in userfreq:
+        print("%s percentage:\t%.2f" % (u, userfreq[u]*100))
+    print("%%%%%%%%%%%%%%% F R E Q %%%%%%%%%%%%%%%")
+    print("\n*************** D A T A ***************")
+    
 ########################## THREAD/CHAT VISUAL FUNCTIONS ####################################################
 
 
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
+    displayChatData(threads[125])
+    displayStringMatches(threads[125], "yo")
     #displayAllUsers(threads)
-    #displaySpecified(threads, "Milan Patel")
-    testring = "kek"
-    counter = 0
-    counter += getStringMatches(threads[0], testring)
-    counter += getStringMatches(threads[275], testring)
-    counter += getStringMatches(threads[276], testring)
-    counter += getStringMatches(threads[277], testring)
-    counter += getStringMatches(threads[278], testring)
-    counter += getStringMatches(threads[278], testring)
-    counter += getStringMatches(threads[337], testring)
-    print(counter)
+    #displaySpecified(threads, "Pedro Pereira")
     #print("\n*******DISPLAYING CHAT *********\n")
     #displayChat(threads[337])
     #displayPostingFreq(threads[125])
