@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 from stringformatting import *
 from bs4 import BeautifulSoup
 
@@ -91,6 +92,28 @@ def getAverageMessageLength(chat):
     
 ##################################### DATA RETRIEVAL FUNCTIONS ####################################################
 
+def mostCommonPost(chat, n=0):
+    """ returns the n most common post/message that exists in a chat """
+    posts = [p.string for p in chat.find_all("p") if p.string != None]
+    frequencies = dict()
+
+    for p in posts:
+        if p not in frequencies:
+            frequencies[p] = 1
+        else:
+            frequencies[p] += 1
+
+    scores = [frequencies[key] for key in frequencies]
+    topPost = max(scores)
+    ranks = list()
+    
+    for k in frequencies:
+        if frequencies[k] == topPost:
+            return (k, frequencies[k])
+
+            
+    return 'termination without success...'
+
 ################################# THREAD/CHAT VISUAL FUNCTIONS ####################################################
 
 def displayStringMatches(chat, string):
@@ -178,8 +201,9 @@ def displayChatData(chat):
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    displayChatData(threads[125])
-    displayStringMatches(threads[125], "yo")
+    print(mostCommonPost(threads[102]))
+    #displayChatData(threads[125])
+    #displayStringMatches(threads[125], "yo")
     #displayAllUsers(threads)
     #displaySpecified(threads, "Pedro Pereira")
     #print("\n*******DISPLAYING CHAT *********\n")
