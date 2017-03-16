@@ -108,8 +108,9 @@ def mostCommonPost(chat, n=1):
     if len(scores) == 0:
         print("No outstanding frequencies found...terminating")
         return 0
-    
-    topPost = max(scores)
+
+    sigTuples = [(key, frequencies[key]) for key in frequencies]
+    topPost = max(sigTuples, key= lambda x:x[1])[1]
     ranks = list()
     checked = list()
 
@@ -219,13 +220,10 @@ def displayChatData(chat):
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    a = mostCommonPost(threads[0], 7)
-    print(len(a))
-    print(a)
-    #displayChatData(threads[125])
+    displayChatData(threads[206])
     #displayStringMatches(threads[125], "yo")
     #displayAllUsers(threads)
-    #displaySpecified(threads, "Pedro Pereira")
+    #displaySpecified(threads, "Daniel Qiu")
     #print("\n*******DISPLAYING CHAT *********\n")
     #displayChat(threads[337])
     #displayPostingFreq(threads[125])
