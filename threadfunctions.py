@@ -92,27 +92,45 @@ def getAverageMessageLength(chat):
     
 ##################################### DATA RETRIEVAL FUNCTIONS ####################################################
 
-def mostCommonPost(chat, n=0):
+def mostCommonPost(chat, n=1):
     """ returns the n most common post/message that exists in a chat """
     posts = [p.string for p in chat.find_all("p") if p.string != None]
     frequencies = dict()
-
+    
     for p in posts:
         if p not in frequencies:
             frequencies[p] = 1
         else:
             frequencies[p] += 1
 
-    scores = [frequencies[key] for key in frequencies]
+    scores = [frequencies[key] for key in frequencies if frequencies[key] != 1]
+    
+    if len(scores) == 0:
+        print("No outstanding frequencies found...terminating")
+        return 0
+    
     topPost = max(scores)
     ranks = list()
-    
-    for k in frequencies:
-        if frequencies[k] == topPost:
-            return (k, frequencies[k])
+    checked = list()
 
+    for k in frequencies:
+        if frequencies[k] == topPost: #and frequencies.get(k, topPost) not in checked:
+            ranks += [(k, frequencies[k])]
+            checked += [(k, frequencies[k])]
+            print("updating list...")
+            scores.remove(topPost)
+            print("updating max: %d" % topPost)
+            topPost = max(scores)
+            print("max updated: %d" % topPost)
+            print("updating n: %d" % n)
+            n -= 1
+            print("n updated: %d" % n)
+
+        if n == 0:
+            print("n=0, commencing termination")
+            break
             
-    return 'termination without success...'
+    return ranks
 
 ################################# THREAD/CHAT VISUAL FUNCTIONS ####################################################
 
@@ -201,7 +219,9 @@ def displayChatData(chat):
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    print(mostCommonPost(threads[102]))
+    a = mostCommonPost(threads[0], 7)
+    print(len(a))
+    print(a)
     #displayChatData(threads[125])
     #displayStringMatches(threads[125], "yo")
     #displayAllUsers(threads)
