@@ -92,46 +92,30 @@ def getAverageMessageLength(chat):
     
 ##################################### DATA RETRIEVAL FUNCTIONS ####################################################
 
-def mostCommonPost(chat, n=1):
-    """ returns the n most common post/message that exists in a chat """
+def mostCommonPosts(chat):
+    """ returns tuple list of most common posts/messages that exists in a chat """
     posts = [p.string for p in chat.find_all("p") if p.string != None]
-    frequencies = dict()
-    
+    frequencies = dict() #initialize dictionary to capture frequency of posts
+
+    #count up all occurences of each post
     for p in posts:
         if p not in frequencies:
             frequencies[p] = 1
         else:
             frequencies[p] += 1
 
+    #collect frequency values, terminate program if the chat contains truly distinct posts
     scores = [frequencies[key] for key in frequencies if frequencies[key] != 1]
     
     if len(scores) == 0:
-        print("No outstanding frequencies found...terminating")
+        print("No distinct frequencies found...terminating")
         return 0
 
-    sigTuples = [(key, frequencies[key]) for key in frequencies]
-    topPost = max(sigTuples, key= lambda x:x[1])[1]
-    ranks = list()
-    checked = list()
+    #create tuple list of dictionary keys and values
+    postScores = [(key, frequencies[key]) for key in frequencies if frequencies[key] in scores]
+    sortedScores = sorted(postScores, key= lambda t:t[1])
 
-    for k in frequencies:
-        if frequencies[k] == topPost: #and frequencies.get(k, topPost) not in checked:
-            ranks += [(k, frequencies[k])]
-            checked += [(k, frequencies[k])]
-            print("updating list...")
-            scores.remove(topPost)
-            print("updating max: %d" % topPost)
-            topPost = max(scores)
-            print("max updated: %d" % topPost)
-            print("updating n: %d" % n)
-            n -= 1
-            print("n updated: %d" % n)
-
-        if n == 0:
-            print("n=0, commencing termination")
-            break
-            
-    return ranks
+    return sortedScores
 
 ################################# THREAD/CHAT VISUAL FUNCTIONS ####################################################
 
@@ -220,10 +204,12 @@ def displayChatData(chat):
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    displayChatData(threads[206])
+    l = mostCommonPosts(threads[276])
+    [print(x) for x in l]
+    #displayChatData(threads[206])
     #displayStringMatches(threads[125], "yo")
     #displayAllUsers(threads)
-    #displaySpecified(threads, "Daniel Qiu")
+    #displaySpecified(threads, "Daniel Wilson")
     #print("\n*******DISPLAYING CHAT *********\n")
     #displayChat(threads[337])
     #displayPostingFreq(threads[125])
