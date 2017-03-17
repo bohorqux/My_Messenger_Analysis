@@ -98,14 +98,18 @@ def getAverageMessageLength(chat):
 def mostCommonPosts(chat):
     """ returns tuple list of most common posts/messages that exists in a chat """
     posts = [p.string for p in chat.find_all("p") if p.string != None]
+    return createFrequencyList(posts)
+
+def createFrequencyList(aList):
+    """ helper function that returns a tuple list (element, frequency) in aList """
     frequencies = dict() #initialize dictionary to capture frequency of posts
 
-    #count up all occurences of each post
-    for p in posts:
-        if p not in frequencies:
-            frequencies[p] = 1
+    #count up all occurences of each element
+    for element in aList:
+        if element not in frequencies:
+            frequencies[element] = 1
         else:
-            frequencies[p] += 1
+            frequencies[element] += 1
 
     #collect frequency values, terminate program if the chat contains truly distinct posts
     scores = [frequencies[key] for key in frequencies if frequencies[key] != 1]
@@ -115,8 +119,8 @@ def mostCommonPosts(chat):
         return 0
 
     #create tuple list of dictionary keys and values
-    postScores = [(key, frequencies[key]) for key in frequencies if frequencies[key] in scores]
-    sortedScores = sorted(postScores, key= lambda t:t[1])
+    elementScores = [(key, frequencies[key]) for key in frequencies if frequencies[key] in scores]
+    sortedScores = sorted(elementScores, key= lambda t:t[1])
 
     return sortedScores
 
@@ -126,16 +130,16 @@ def collectWords(chat):
     wordies = list()
     
     #probably a really inefficient way to get all the words
-    for words in posts:
-        for w in range(len(words)):
-            wordies.append(words[w])
+    for sentence in posts:
+        for words in sentence.split(" "):
+            wordies.append(words)
     return wordies
             
 def mostCommonWords(chat):
     """ returns tuple list of most common words that exist in a chat """
-
-    posts = [p.string for p in chat.find_all("p") if p.string != None]
-    #words = 
+    words = collectWords(chat)
+    return createFrequencyList(words)
+    
 ################################# MIDDLEWARE         FUNCTIONS ####################################################
 
 ################################# THREAD/CHAT VISUAL FUNCTIONS ####################################################
@@ -218,20 +222,31 @@ def displayChatData(chat):
         print("%s percentage:\t%.2f" % (u, userfreq[u]*100))
     print("%%%%%%%%%%%%%%% F R E Q %%%%%%%%%%%%%%%")
     print("\n*************** D A T A ***************")
-    
+
+def displayFrequencyList(aList, titlestring, columnstring):
+    """ prints out the frequency """
+
+    print("^^^^^^^^^^^^^^^^^^^^ %s ^^^^^^^^^^^^^^^^^^^^^^^^^" % titlestring)
+    print("\n%s:\t\tScore:\n--------------------\n" % columnstring)
+
+    for (x,y) in aList:
+        print("%s:\t\t%d" % (x, y))
+        
 ########################## THREAD/CHAT VISUAL FUNCTIONS ####################################################
 
 
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    print(len(collectWords(threads[275])))
+    chat = (threads[125], threads[255])
+    words = mostCommonWords(chat[1])
+    displayFrequencyList(words, "PEDRO XAVI WORD LIST", "Word")
     #l = mostCommonPosts(threads[275])
     #[print(x) for x in l]
-    displayChatData(threads[275])
+    #displayChatData(threads[275])
     #displayStringMatches(threads[125], "yo")
     #displayAllUsers(threads)
-    #displaySpecified(threads, "Benjamin V Kincaid")
+    #displaySpecified(threads, "Pedro Pereira")
     #print("\n*******DISPLAYING CHAT *********\n")
     #displayChat(threads[337])
     #displayPostingFreq(threads[125])
