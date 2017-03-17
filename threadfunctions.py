@@ -87,11 +87,14 @@ def getTotalWords(chat):
 def getAverageMessageLength(chat):
     """ returns average number of words in a chat """
     posts = [p.string for p in chat.find_all("p")]
-    return len(posts)/getTotalWords(chat)
+    avg =  len(posts)/getTotalWords(chat)
+    avg_n = avg * 100
+    return avg_n
     
     
 ##################################### DATA RETRIEVAL FUNCTIONS ####################################################
 
+##################################### MIDDLEWARE     FUNCTIONS ####################################################
 def mostCommonPosts(chat):
     """ returns tuple list of most common posts/messages that exists in a chat """
     posts = [p.string for p in chat.find_all("p") if p.string != None]
@@ -116,6 +119,24 @@ def mostCommonPosts(chat):
     sortedScores = sorted(postScores, key= lambda t:t[1])
 
     return sortedScores
+
+def collectWords(chat):
+    """ returns a list of all words in a chat """
+    posts = [p.string for p in chat.find_all('p') if p.string != None]
+    wordies = list()
+    
+    #probably a really inefficient way to get all the words
+    for words in posts:
+        for w in range(len(words)):
+            wordies.append(words[w])
+    return wordies
+            
+def mostCommonWords(chat):
+    """ returns tuple list of most common words that exist in a chat """
+
+    posts = [p.string for p in chat.find_all("p") if p.string != None]
+    #words = 
+################################# MIDDLEWARE         FUNCTIONS ####################################################
 
 ################################# THREAD/CHAT VISUAL FUNCTIONS ####################################################
 
@@ -204,12 +225,13 @@ def displayChatData(chat):
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    l = mostCommonPosts(threads[276])
-    [print(x) for x in l]
-    #displayChatData(threads[206])
+    print(len(collectWords(threads[275])))
+    #l = mostCommonPosts(threads[275])
+    #[print(x) for x in l]
+    displayChatData(threads[275])
     #displayStringMatches(threads[125], "yo")
     #displayAllUsers(threads)
-    #displaySpecified(threads, "Daniel Wilson")
+    #displaySpecified(threads, "Benjamin V Kincaid")
     #print("\n*******DISPLAYING CHAT *********\n")
     #displayChat(threads[337])
     #displayPostingFreq(threads[125])
