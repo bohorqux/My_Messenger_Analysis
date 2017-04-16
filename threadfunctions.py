@@ -95,6 +95,10 @@ def getAverageMessageLength(chat):
 ##################################### DATA RETRIEVAL FUNCTIONS ####################################################
 
 ##################################### MIDDLEWARE     FUNCTIONS ####################################################
+def getPosts(chat):
+    """ returns list of all posts in a chat """
+    return [p.string for p in chat.find_all("p") if p.string != None]
+
 def mostCommonPosts(chat):
     """ returns tuple list of most common posts/messages that exists in a chat """
     posts = [p.string for p in chat.find_all("p") if p.string != None]
@@ -139,7 +143,15 @@ def mostCommonWords(chat):
     """ returns tuple list of most common words that exist in a chat """
     words = collectWords(chat)
     return createFrequencyList(words)
-    
+
+def getUserTimestamps(chat, user):
+    """ returns tuple list of specified user with their timestamps """
+    users = [u.string for u in chat.find_all("span", class_ = "user")]
+    timestamps = [format_date(string_to_date(t.string)) for t in chat.find_all("span", class_ = "meta")]
+    users.reverse()
+    timestamps.reverse()
+    cross = [(users[i], timestamps[i]) for i in range(len(timestamps)) if users[i] == user]
+    return cross
 ################################# MIDDLEWARE         FUNCTIONS ####################################################
 
 ################################# THREAD/CHAT VISUAL FUNCTIONS ####################################################
@@ -230,7 +242,7 @@ def displayFrequencyList(aList, titlestring, columnstring):
     print("\n%s:\t\tScore:\n--------------------\n" % columnstring)
 
     for (x,y) in aList:
-        print("%s:\t\t%d" % (x, y))
+        print("%s\t\t%d" % (x, y))
         
 ########################## THREAD/CHAT VISUAL FUNCTIONS ####################################################
 
@@ -238,20 +250,10 @@ def displayFrequencyList(aList, titlestring, columnstring):
 ###################################### MAIN ################################################################
 def main():
     threads = initThreads("messages.htm")
-    chat = (threads[125], threads[255])
-    words = mostCommonWords(chat[1])
-    displayFrequencyList(words, "PEDRO XAVI WORD LIST", "Word")
-    #l = mostCommonPosts(threads[275])
-    #[print(x) for x in l]
-    #displayChatData(threads[275])
-    #displayStringMatches(threads[125], "yo")
-    #displayAllUsers(threads)
-    #displaySpecified(threads, "Pedro Pereira")
-    #print("\n*******DISPLAYING CHAT *********\n")
-    #displayChat(threads[337])
-    #displayPostingFreq(threads[125])
+    displayChatData(threads[313])
     return 0
+
 ###################################### MAIN #################################################################
 
-main()
+#main()
 
