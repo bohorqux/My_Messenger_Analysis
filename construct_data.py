@@ -39,7 +39,7 @@ def timestampsCounter(start, end, outFile, timearray, val):
     counter = 0
     timeindice = 0
     
-    while ss != es and timeindice < len(timearray):
+    while ss != es and timeindice < 25:
 
         
         if ss == timearray[timeindice]:
@@ -96,5 +96,5 @@ def main():
     timestampsCounter(dan_stamps[0], dan_stamps[-1], fileOut, dan_stamps, 2)
     fileOut.close()
 
-main()
+
     
