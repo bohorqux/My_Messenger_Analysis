@@ -14,9 +14,9 @@ def miliTime(time):
         isPM = True
 
     time = int(time[:-2]) #removing am/pm discretion to perform essential mathematical operations
-    if 1159 < time < 1259 and not isPM:
+    if 1200 <= time <= 1259 and not isPM: #convert time between 12:00am-12:59am into military time
         time -= 1200        
-    if isPM:
+    if isPM and 100 <= time <= 1159:
         time += 1200
     
     return str(time)

@@ -6,6 +6,11 @@ from stringformatting import *
 
 def main():
     threads = initThreads("messages.htm")
+    chat = threads[313]
+    original_timestamps = [t.string for t in chat.find_all("span", class_ = "meta")]
+    original_timestamps.reverse()
+    original_timestamps = original_timestamps[30:55]
+    
     print("Testing lead_zeros() function...")
 
     test1 = ""
@@ -45,5 +50,14 @@ def main():
     print("String = %s\tNum Zeros = %d" % (test5,zeros))
     print("\nexpected: %s\nresult: %s\n" % ("1000", lead_zeros(test5, zeros)))
     print("***********")
+
+    print("\nTesting miliTime() function...")
+    print("***************")
+    print("Test Case: 6")
+    [print(timestamp) for timestamp in original_timestamps]
+    print()
+    [print(string_to_date(timestamp)) for timestamp in original_timestamps]
+    print()
+    [print(format_date(string_to_date(timestamp))) for timestamp in original_timestamps]
 
 main()

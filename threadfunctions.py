@@ -144,6 +144,20 @@ def mostCommonWords(chat):
     words = collectWords(chat)
     return createFrequencyList(words)
 
+def debugTimeStamp(chat, user, istart, iend):
+    users = [u.string for u in chat.find_all("span", class_ = "user")]
+    timestamps = [t.string for t in chat.find_all("span", class_ = "meta")]
+    users.reverse()
+    timestamps.reverse()
+    toDate = [string_to_date(t) for t in timestamps]
+    formatted = [format_date(t) for t in toDate]
+
+    for i in (istart, iend, 1):
+        print("original timestamp:\t%s" % timestamps[i])
+        print("string_to_date timestamp:\t%s" % toDate[i])
+        print("formatted timestamp:\t%s" % formatted[i])
+        print()
+        
 def getUserTimestamps(chat, user):
     """ returns tuple list of specified user with their timestamps """
     users = [u.string for u in chat.find_all("span", class_ = "user")]

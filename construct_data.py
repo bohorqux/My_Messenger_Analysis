@@ -4,6 +4,7 @@ from threadfunctions import *
 
 #  m  m  :  d  d  :  y  y  y  y  :  t  t  t  t
 #  0  1  2  3  4  5  6  7  8  9  10 11 12 13 14
+
 def incrementMinute(timestamp):
     assert(type(timestamp)) == str
     new_time = timestamp[:-4]
@@ -39,15 +40,16 @@ def timestampsCounter(start, end, outFile, timearray, val):
     counter = 0
     timeindice = 0
     
-    while ss != es and timeindice < 25:
-
+    while ss != es:
         
         if ss == timearray[timeindice]:
-            #print("MATCH FOUND")
+            #if timeindice >= 130:
+                #input("MATCH FOUND")
+                #input("***finding next timestamp:\t%s***" % timearray[timeindice+1])
             t = "".join(ss.split(":"))
             timeindice += 1
-            #print("***finding timestamp:\t%s***" % timearray[timeindice])
-            outFile.write("%d\t%d\n" % (counter, val))
+            print("***finding next timestamp:\t%s***" % timearray[timeindice])
+            #outFile.write("%d\t%d\n" % (counter, val))
 
         elif int(ss[13:]) == 60:
             ss = incrementHour(ss)
@@ -68,9 +70,10 @@ def timestampsCounter(start, end, outFile, timearray, val):
 
         else:
             ss = incrementMinute(ss)
-            outFile.write("%d\n" % counter)
+            #outFile.write("%d\n" % counter)
 
         counter += 1
+        print(ss)
 
     print("time indice = %d\tarray length = %d\n" % (timeindice, len(timearray)))
         
@@ -79,22 +82,19 @@ def main():
     threads = initThreads("messages.htm")
     chat = threads[313]
     debug = [t.string for t in chat.find_all("span", class_ = "meta")]
+    users = [u.string for u in chat.find_all("span", class_ = "user")]
+    users.reverse()
     debug.reverse()
-    print(debug[38:44])
+    cross = [(users[i], debug[i]) for i in range(len(debug)) if users[i] == "Xavier Bohorquez"]
+    cross = [x[1] for x in cross]
+    [print(cross[i]) for i in range(130, 150)]
+    print()
     
-    xavi_stamps = getUserTimestamps(chat, "Xavier Bohorquez")
-    xavi_stamps = [x[1] for x in xavi_stamps]
-    print(xavi_stamps[38:44])
-    dan_stamps = getUserTimestamps(chat, "Dan Palacio")
-    dan_stamps = [x[1] for x in dan_stamps]
-    
-    fileOut = open("Xlog.dat", "w")
-    timestampsCounter(xavi_stamps[0], xavi_stamps[-1], fileOut, xavi_stamps, 1)
-    fileOut.close()
+    xavi_stamps = [timestamp[1] for timestamp in getUserTimestamps(chat, "Xavier Bohorquez")]
+    [print(xavi_stamps[i]) for i in range(130, 150)]
 
-    fileOut = open("Dlog.dat", "w")
-    timestampsCounter(dan_stamps[0], dan_stamps[-1], fileOut, dan_stamps, 2)
-    fileOut.close()
+    timestampsCounter(xavi_stamps[0], xavi_stamps[-1], 10, xavi_stamps, 1)
 
+main()
 
     
