@@ -34,67 +34,61 @@ def incrementYear(timestamp):
     year = int(timestamp[6:10]) + 1
     return new_time1 + lead_zeros(str(year), 4) + new_time2
 
-def timestampsCounter(start, end, outFile, timearray, val):
-    ss = start
-    es = end
+def incrementTime(timestamp):
+
+    timestamp = incrementMinute(timestamp)
+    
+    if int(timestamp[13:]) == 60:
+        timestamp = incrementHour(timestamp)
+        timestamp = timestamp[:13] + "00"
+            
+    elif int(timestamp[11:13]) == 25:
+        timestamp = incrementDay(timestamp)
+        timestamp = timestamp[:11] + "0000"
+
+    elif int(timestamp[3:5]) == 32:
+        timestamp = incrementMonth(timestamp)
+        timestamp = timestamp[:3] + "01" + timestamp[5:]
+
+    elif int(timestamp[:2]) == 13:
+        timestamp = incrementYear(timestamp)
+        timestamp = "01" + timestamp[2:]
+
+    return timestamp
+
+def timeStampCounter(start, end, outFile, timearray, val):
     counter = 0
     timeindice = 0
-    
-    while ss != es:
+
+    while start != incrementTime(end) and timeindice < len(timearray):
         
-        if ss == timearray[timeindice]:
-            #if timeindice >= 130:
-                #input("MATCH FOUND")
-                #input("***finding next timestamp:\t%s***" % timearray[timeindice+1])
-            t = "".join(ss.split(":"))
+        if start == timearray[timeindice]:
+            t = "".join(start.split(":"))
             timeindice += 1
-            print("***finding next timestamp:\t%s***" % timearray[timeindice])
-            #outFile.write("%d\t%d\n" % (counter, val))
-
-        elif int(ss[13:]) == 60:
-            ss = incrementHour(ss)
-            ss = ss[:13] + "00"
-            
-        elif int(ss[11:13]) == 25:
-            ss = incrementDay(ss)
-            ss = ss[:11] + "0000"
-
-        elif int(ss[3:5]) == 32:
-            ss = incrementMonth(ss)
-            ss = ss[:3] + "01" + ss[5:]
-
-        elif int(ss[:2]) == 13:
-            ss = incrementYear(ss)
-            ss = "01" + ss[2:]
-
+            outFile.write("%d\t%d\n" % (counter, val))
 
         else:
-            ss = incrementMinute(ss)
-            #outFile.write("%d\n" % counter)
+            start = incrementTime(start)
+            outFile.write("%d\n" % counter)
 
         counter += 1
-        print(ss)
+            
+    print("time indice = %d\tarray length = %d\n" % (timeindice, len(timearray)))        
 
-    print("time indice = %d\tarray length = %d\n" % (timeindice, len(timearray)))
-        
+
+def createPlot(filename, chat, user, val):
+
+    timearray = [timestamp[1] for timestamp in getUserTimestamps(chat, user)]
+    plot = open(filename, "w")
+    timeStampCounter(timearray[0], timearray[-1], plot, timearray, val)
+    plot.close()
     
 def main():
     threads = initThreads("messages.htm")
     chat = threads[313]
-    debug = [t.string for t in chat.find_all("span", class_ = "meta")]
-    users = [u.string for u in chat.find_all("span", class_ = "user")]
-    users.reverse()
-    debug.reverse()
-    cross = [(users[i], debug[i]) for i in range(len(debug)) if users[i] == "Xavier Bohorquez"]
-    cross = [x[1] for x in cross]
-    [print(cross[i]) for i in range(130, 150)]
-    print()
+    createPlot("Xlog.dat", chat, "Xavier Bohorquez", 1)
+    createPlot("Dlog.dat", chat, "Dan Palacio", 2)
     
-    xavi_stamps = [timestamp[1] for timestamp in getUserTimestamps(chat, "Xavier Bohorquez")]
-    [print(xavi_stamps[i]) for i in range(130, 150)]
-
-    timestampsCounter(xavi_stamps[0], xavi_stamps[-1], 10, xavi_stamps, 1)
-
 main()
 
     
